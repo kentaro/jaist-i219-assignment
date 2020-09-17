@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>220</y>
+      <w>290</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>MapOfStringToInteger
+--
+-list: ArrayList&lt;PairOfStringAndInteger&gt;
+--
++put(k: String, v:Integer): Void
++get(k: String): Integer
++delete(k: String): Void
++isRegistered(k: String): Boolean
+-findIndex(k: String): Integer</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>430</x>
+      <y>220</y>
+      <w>150</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>栗林健太郎（東京）
+2030006
+2020年9月8日
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
