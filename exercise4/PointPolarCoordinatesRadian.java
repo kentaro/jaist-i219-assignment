@@ -21,6 +21,7 @@ class PointPolarCoordinatesRadian extends AbstractPointPolarCoordinates {
     }
 
     public String toString() {
-        return "(" + this.getR() + "," + this.getTheta() + ")";
+        return "<r: " + this.getR() + ","
+            + "theta(in radian): " + this.getTheta() + ">";
     }
 }
