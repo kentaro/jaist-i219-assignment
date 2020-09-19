@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年9月19日
+ */
+
 class PointPolarCoordinatesRadian extends AbstractPointPolarCoordinates {
     public PointPolarCoordinatesRadian(double r, double theta) throws PointException {
         if (r < 0.0) {

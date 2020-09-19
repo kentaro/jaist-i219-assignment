@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年9月19日
+ */
+
 public class Point {
     private double x = -0.5;
     private double y;

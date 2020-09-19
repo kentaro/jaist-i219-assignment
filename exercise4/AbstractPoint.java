@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年9月19日
+ */
+
 public abstract class AbstractPoint implements PointInterface {
     public abstract double distance();
     public abstract double getX();
