@@ -15,7 +15,7 @@ public class DistanceBetweenTwoPoints {
         AbstractPoint[] p = new AbstractPoint[2];
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
-        System.out.println("Input two poinst in polar coordinate system");
+        System.out.println("Input two points in polar coordinate system");
 
         while (i < 2) {
             try {
@@ -25,7 +25,7 @@ public class DistanceBetweenTwoPoints {
                 System.out.print("theta" + i + ": ");
                 line = br.readLine().trim();
                 theta[i] = Double.parseDouble(line);
-                p[i] = new PointPolarCoordinatesDegree(r[i], theta[i]);
+                p[i] = new PointPolarCoordinatesRadian(r[i], theta[i]);
                 i++;
             } catch (PointException e) {
                 System.err.println(e);
