@@ -14,7 +14,7 @@ public class SubB extends B {
         super.m2(x, y);
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         (new SubB()).m1(new B());
     }
 }

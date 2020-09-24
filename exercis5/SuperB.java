@@ -2,6 +2,7 @@ public class SuperB extends SSuperB {
     public void m1(SuperB x) {
         System.out.println("m1(SuperB x) in SuperB;");
         // AMsgPassing
+        (new SubB()).m2(new B(), new B());
     }
 
     public void m2(SubB x, SubB y) {

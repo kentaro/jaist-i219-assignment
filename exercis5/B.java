@@ -14,7 +14,7 @@ public class B extends SuperB {
         super.m2(new B(), new B());
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         (new B()).m1(new B());
     }
 }
