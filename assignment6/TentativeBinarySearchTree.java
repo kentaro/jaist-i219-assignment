@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年10月25日
+ */
+
 public class TentativeBinarySearchTree<K extends Comparable<K>, V> {
     private TBSTree<K, V> bst;
 

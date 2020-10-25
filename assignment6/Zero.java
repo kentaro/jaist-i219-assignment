@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年10月25日
+ */
+
 public class Zero implements Nat {
     public Nat plus(Nat y) {
         return y;

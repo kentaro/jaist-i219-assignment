@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年10月25日
+ */
+
 public class TBSNlTree<K extends Comparable<K>, V> implements TBSTree<K, V> {
     private K key;
     private V val;
