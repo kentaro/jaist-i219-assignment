@@ -1,3 +1,9 @@
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年10月27日
+ */
+
 import java.util.*;
 
 public class MulParseTree
