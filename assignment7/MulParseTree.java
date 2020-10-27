@@ -4,7 +4,6 @@
  * 2020年10月27日
  */
 
-import java.util.*;
 
 public class MulParseTree
     implements ExpParseTree

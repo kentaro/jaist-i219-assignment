@@ -1,4 +1,8 @@
-import java.util.*;
+/**
+ * 栗林健太郎
+ * 2030006
+ * 2020年10月27日
+ */
 
 public class RemParseTree
     implements ExpParseTree
