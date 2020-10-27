@@ -66,6 +66,6 @@
 
 ### 実行結果
 
-本アプリケーションSimple Calculatorを、以下の通り実行した。本課題において追加を要した`MulParseTree`, `SubParseTree`, `QuoParseTree`, `UmiParseTree`に関する計算式を実行している。
+本アプリケーションSimple Calculatorを、以下の通り実行した。本課題において追加を要した`MulParseTree`, `SubParseTree`, `RemParseTree`, `UmiParseTree`に関する計算式を実行している。
 
 ![](./SCCLP.png)

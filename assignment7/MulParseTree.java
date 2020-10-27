@@ -4,7 +4,6 @@
  * 2020年10月27日
  */
 
-
 public class MulParseTree
     implements ExpParseTree
 {
