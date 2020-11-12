@@ -7,8 +7,8 @@
 import java.util.*;
 
 public class VendingMachine {
-    private HashMap<Coin, Integer> cashBox;
-    private HashMap<Item, Integer> itemBox;
+    private Map<Coin, Integer> cashBox;
+    private Map<Item, Integer> itemBox;
 
     public VendingMachine() {
         cashBox = new HashMap<Coin, Integer>();
@@ -41,6 +41,8 @@ public class VendingMachine {
     }
 
     private boolean pay(int c) {
+        c = c/10;
+
         while (cashBox.get(Coin.TEN) < c) {
             if (cashBox.get(Coin.FIFTY) > 0) {
                 int t1 = cashBox.get(Coin.FIFTY);
@@ -71,7 +73,7 @@ public class VendingMachine {
             return false;
         }
 
-        boolean b = pay(cost/10);
+        boolean b = pay(cost);
         if (b) {
             int c = itemBox.get(i);
             itemBox.put(i, c + 1);
