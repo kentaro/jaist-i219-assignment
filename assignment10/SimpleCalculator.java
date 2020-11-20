@@ -57,16 +57,24 @@ public class SimpleCalculator {
     }
 
     public void showSourceCode() {
-        System.out.println(sc.toString());
+        if (sc == null) {
+            System.err.println("No source code input!");
+        } else {
+            System.out.println(sc.toString());
+        }
     }
 
     public void showParseTree() {
-        System.out.println(ept.toString());
+        if (ept == null) {
+            System.err.println("No parse tree build!");
+        } else {
+            System.out.println(ept.toString());
+        }
     }
 
     public void showCodeList() {
         if (vm == null) {
-            System.err.println("No compiled!");
+            System.err.println("No code list compiled!");
         } else {
             System.out.println(vm.getComList());
         }

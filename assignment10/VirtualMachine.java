@@ -39,7 +39,7 @@ public class VirtualMachine {
                     break;
                 case MUL:
                     if (stk.size() < 2) {
-                        throw new VMException(stk, stk.size());
+                        throw new VMException(stk);
                     }
                     x2 = stk.top();
                     stk.pop();
@@ -51,14 +51,14 @@ public class VirtualMachine {
                     break;
                 case QUO:
                     if (stk.size() < 2) {
-                        throw new VMException(stk, stk.size());
+                        throw new VMException(stk);
                     }
                     x2 = stk.top();
                     stk.pop();
                     x1 = stk.top();
                     stk.pop();
                     if (x2 == 0) {
-                        throw new VMException("Division by zero");
+                        throw new VMException();
                     }
                     x = x1 / x2;
                     stk.push(x);
@@ -66,7 +66,7 @@ public class VirtualMachine {
                     break;
                 case ADD:
                     if (stk.size() < 2) {
-                        throw new VMException(stk, stk.size());
+                        throw new VMException(stk);
                     }
                     x2 = stk.top();
                     stk.pop();
@@ -78,7 +78,7 @@ public class VirtualMachine {
                     break;
                 case SUB:
                     if (stk.size() < 2) {
-                        throw new VMException(stk, stk.size());
+                        throw new VMException(stk);
                     }
                     x2 = stk.top();
                     stk.pop();
