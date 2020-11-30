@@ -379,3 +379,37 @@ gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"JOIN" ,1/1,isCascaded:false}
 * transition #13: `thread: 3`（`receiver`）は`notifyAll()`を待ち続ける
 
 `receiver`が`notifyAll()`を実行したあと、`sender1`がロックを取りメッセージを送信する。`sender2`はその後にロックを取るが、その際には`FMonitorBBuf1`の`if (noe < capacity) {`の箇所が`true`になることはなく、`sender2`はメッセージを送信することなく、`this.notifyAll()`を実行することはない。そのため、`this.wait()`で待ちに入った`receiver`スレッドが起きることはなくなり、デッドロックになってしまう。
+
+最後に、`MonitorBBuf2`で、メッセージを`get`する際に`while`で待つ条件を`noe <= 0`から`noe < 0`に変更した`FMonitorBBuf2`をバッファとして用いるSender/Receiverを使う`FBBProb2`を実行する。
+
+![](./FBBProb2.png)
+
+上記の通り、メッセージを適切に送受信することに失敗している。
+
+`FBBProb2`をJPFで検査する。
+
+![](./FBBProb2Jpf.png)
+
+以下の通り、アサーションエラーで終了する。
+
+```
+====================================================== snapshot #1
+thread java.lang.Thread:{id:0,name:main,status:RUNNING,priority:5,isDaemon:false,lockCount:0,suspendCount:0}
+  call stack:
+	at FBBProb2.main(FBBProb2.java:41)
+
+
+====================================================== results
+error #1: gov.nasa.jpf.vm.NoUncaughtExceptionsProperty "java.lang.AssertionError  at FBBProb2.main(FBBProb..."
+```
+
+以下の通り、`while`で待つ条件が`0`未満となっているために`0`の際に待たなくなってしまうため、適切に処理が行われなくなってしまう。
+
+```
+------------------------------------------------------ transition #130 thread: 3
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"LOCK" ,2/2,isCascaded:false}
+  FReceiver2.java:23             : msgs.add(buf.get());
+  FMonitorBBuf2.java:35          : while (noe < 0) {
+  FMonitorBBuf2.java:39          : if (noe > 0) {
+  FMonitorBBuf2.java:46          : return null;
+```
