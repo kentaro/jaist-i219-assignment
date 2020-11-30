@@ -12,7 +12,7 @@
 
 上記の通り、`count: 1`が表示される（2度めの実行のように`-enableassertions`オプションをつけて実行するとアサーションエラーが起こる）。
 
-次に、`SimpInc`をJPFで検査する。
+`SimpInc`をJPFで検査する。
 
 ![](./SimpIncJpf.png)
 
@@ -52,13 +52,13 @@ gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"JOIN" ,1/1,isCascaded:false}
 
 ## `SimpConcInc`
 
-次に、競合の起こる`SimpConcInc.java`を実行する。
+競合の起こる`SimpConcInc.java`を実行する。
 
 ![](./SimpConcInc.png)
 
 上記の通り、`count: 2`が表示される。`-enableassertions`オプションをつけて実行してもエラーが起こらないため、一見すると正しく実行されているかのように見える。
 
-次に、`SimpConcInc`をJPFで検査する。
+`SimpConcInc`をJPFで検査する。
 
 ![](./SimpConcIncJpf.png)
 
@@ -125,7 +125,7 @@ gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"JOIN" ,1/1,isCascaded:false}
 
 上記の通り、`count: 2`が表示される。`-enableassertions`オプションをつけて実行してもエラーが起こらないため、一見すると正しく実行されているかのように見える。
 
-次に、`UnsafeInc`をJPFで検査する。
+`UnsafeInc`をJPFで検査する。
 
 ![](./UnsafeIncJpf.png)
 
@@ -212,7 +212,7 @@ no errors detected
 
 上記の通り、`count: 2`が表示される。
 
-次に、`SafeInc2`をJPFで検査する。
+`SafeInc2`をJPFで検査する。
 
 ![](./SafeInc2Jpf.png)
 
@@ -224,3 +224,158 @@ no errors detected
 ```
 
 ふたつのスレッドそれぞれが、スタティック変数`counter`として宣言された`Counter`オブジェクトを共有しているが、`Counter`クラスでは変数`x`がスタティックではなく、かつ、インクリメントする`inc`メソッドが同期されている。それぞれのスレッドは`counter`オブジェクトに対してロックを取った上でインクリメントを実行するため、同期が適切に行われる。
+
+## Bounded Buffer Problem
+
+前回実装したBounded Buffer Problemを実装したクラス群と`BBProb`を実行する。
+
+![](./BBProb.png)
+
+上記の通り、問題なく処理が成功して終了する。
+
+`BBProb`をJPFで検査する。
+
+![](./BBProbJpf.png)
+
+以下の通り、エラーなく終了する。
+
+```
+====================================================== results
+no errors detected
+```
+
+次に、送信されたメッセージを`log`変数に記録しておくように改修した`MonitorBBuf2`をバッファとして使うようにした`Sender2`および`Receiver2`を用いて、メッセージを送る`Sender2`を2つにした`BBProb2`を実行する。
+
+![](./BBProb2.png)
+
+上記の通り、問題なく処理が成功して終了する。
+
+`BBProb2`をJPFで検査する。
+
+![](./BBProb2Jpf.png)
+
+以下の通り、エラーなく終了する。
+
+```
+====================================================== results
+no errors detected
+```
+
+さらに、上記とほぼ変わらないが、メッセージを`put`する際に`while`で待つところを`if`に変更した`FMonitorBBuf1`をバッファとして用いるSender/Receiverを使う`FBBProb1`を実行する。
+
+![](./FBBProb1.png)
+
+上記の通り、メッセージを適切に送受信することに失敗している。
+
+`FBBProb1`をJPFで検査する。
+
+![](./FBBProb1Jpf.png)
+
+以下の通り、デッドロックを検出する。
+
+```
+====================================================== results
+error #1: gov.nasa.jpf.vm.NotDeadlockedProperty "deadlock encountered:   thread java.lang.Thread:{i..."
+```
+
+3つのスレッドによる各transitionのフローは以下の通りである（競合に関係する箇所のみ抜粋）。
+
+```
+------------------------------------------------------ transition #72 thread: 1
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_OBJECT" ,1/3,isCascaded:false}
+  FMonitorBBuf1.java:22          : if (noe >= capacity) {
+  FMonitorBBuf1.java:23          : this.wait();
+      [1 insn w/o sources]
+------------------------------------------------------ transition #82 thread: 2
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_OBJECT" ,1/2,isCascaded:false}
+  FMonitorBBuf1.java:22          : if (noe >= capacity) {
+  FMonitorBBuf1.java:23          : this.wait();
+      [1 insn w/o sources]
+------------------------------------------------------ transition #83 thread: 3
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"WAIT" ,1/1,isCascaded:false}
+      [1 insn w/o sources]
+  FReceiver1.java:1              : /**
+  FReceiver1.java:21             : for (int i = 0; i < nom; i++) {
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FMonitorBBuf1.java:35          : while (noe <= 0) {
+  FMonitorBBuf1.java:39          : if (noe > 0) {
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  NeQueue.java:25                : return head;
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  NeQueue.java:21                : return tail;
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  FMonitorBBuf1.java:42          : noe--;
+  FMonitorBBuf1.java:43          : this.notifyAll();
+      [2 insn w/o sources]
+  FMonitorBBuf1.java:44          : return e;
+------------------------------------------------------ transition #85 thread: 1
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_OBJECT" ,1/2,isCascaded:false}
+  FMonitorBBuf1.java:26          : if (noe < capacity) {
+  FMonitorBBuf1.java:27          : queue = queue.enq(e);
+------------------------------------------------------ transition #110 thread: 2
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_OBJECT" ,1/2,isCascaded:false}
+  FMonitorBBuf1.java:26          : if (noe < capacity) {
+  FMonitorBBuf1.java:32          : }
+  FSender1.java:24               : }
+  FSender1.java:19               : for (int i = 0; i < msgs.size(); i++) {
+------------------------------------------------------ transition #114 thread: 3
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"JOIN" ,1/1,isCascaded:false}
+  FMonitorBBuf1.java:44          : return e;
+  FReceiver1.java:23             : msgs.add(buf.get());
+      [110 insn w/o sources]
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FReceiver1.java:26             : }
+  FReceiver1.java:21             : for (int i = 0; i < nom; i++) {
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FMonitorBBuf1.java:35          : while (noe <= 0) {
+  FMonitorBBuf1.java:39          : if (noe > 0) {
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  NeQueue.java:25                : return head;
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  NeQueue.java:21                : return tail;
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  FMonitorBBuf1.java:42          : noe--;
+  FMonitorBBuf1.java:43          : this.notifyAll();
+      [2 insn w/o sources]
+  FMonitorBBuf1.java:44          : return e;
+  FReceiver1.java:23             : msgs.add(buf.get());
+      [44 insn w/o sources]
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FReceiver1.java:26             : }
+  FReceiver1.java:21             : for (int i = 0; i < nom; i++) {
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FMonitorBBuf1.java:35          : while (noe <= 0) {
+  FMonitorBBuf1.java:39          : if (noe > 0) {
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  NeQueue.java:25                : return head;
+  FMonitorBBuf1.java:40          : E e = queue.top();
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  NeQueue.java:21                : return tail;
+  FMonitorBBuf1.java:41          : queue = queue.deq();
+  FMonitorBBuf1.java:42          : noe--;
+  FMonitorBBuf1.java:43          : this.notifyAll();
+      [2 insn w/o sources]
+  FMonitorBBuf1.java:44          : return e;
+  FReceiver1.java:23             : msgs.add(buf.get());
+      [44 insn w/o sources]
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FReceiver1.java:26             : }
+  FReceiver1.java:21             : for (int i = 0; i < nom; i++) {
+  FReceiver1.java:23             : msgs.add(buf.get());
+  FMonitorBBuf1.java:35          : while (noe <= 0) {
+  FMonitorBBuf1.java:36          : this.wait();
+      [1 insn w/o sources]
+```
+
+3つのスレッドによる各transitionのフローは以下の通りである。
+
+* transition #72: `thread: 1`（`sender1`）が`this.wait()`で待つ
+* transition #82: `thread: 2`（`sender2`）が`this.wait()`で待つ
+* transition #83: `thread: 3`（`receiver`）が`this.notifyAll()`を実行する
+* transition #85: `thread: 1`（`sender1`）がキューにメッセージを送信する
+* transition #110: `thread: 2`（`sender2`）はキューにメッセージを送信できない
+* transition #13: `thread: 3`（`receiver`）は`notifyAll()`を待ち続ける
+
+`receiver`が`notifyAll()`を実行したあと、`sender1`がロックを取りメッセージを送信する。`sender2`はその後にロックを取るが、その際には`FMonitorBBuf1`の`if (noe < capacity) {`の箇所が`true`になることはなく、`sender2`はメッセージを送信することなく、`this.notifyAll()`を実行することはない。そのため、`this.wait()`で待ちに入った`receiver`スレッドが起きることはなくなり、デッドロックになってしまう。
