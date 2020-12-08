@@ -4,9 +4,9 @@
  * 2020年12月8日
  */
 
-public class Test3DPP {
+public class TestNewSolutionToDPP {
     public static void main(String[] args) {
         NewSolutionToDPP dpp = new NewSolutionToDPP();
-        dpp.begin(3, 1);
+        dpp.begin(5, 1);
     }
 }

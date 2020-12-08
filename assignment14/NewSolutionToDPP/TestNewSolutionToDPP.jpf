@@ -1,0 +1,4 @@
+target = TestNewSolutionToDPP
+classpath+=.
+sourcepath+=.
+report.console.property_violation=eror,trace,snapshot

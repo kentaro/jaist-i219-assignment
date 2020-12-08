@@ -1,7 +1,7 @@
 /**
  * 栗林健太郎
  * 2030006
- * 2020年11月23日
+ * 2020年12月8日
  */
 
 public class Deadlock extends Thread {
