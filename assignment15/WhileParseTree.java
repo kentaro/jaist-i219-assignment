@@ -30,12 +30,14 @@ public class WhileParseTree
 
     public List<Command> compile() {
         List<Command> cl1 = ept.compile();
+        int cl1Size = cl1.size();
         List<Command> cl2 = stm.compile();
+        int cl2Size = cl2.size();
 
         cl1.add(new Command(CommandName.CJMP, 2));
-        cl1.add(new Command(CommandName.JMP, cl2.size() + 2));
+        cl1.add(new Command(CommandName.JMP, cl2Size + 2));
         cl1.addAll(cl2);
-        cl1.add(new Command(CommandName.JMP, -1 * (cl1.size() + cl2.size() + 2)));
+        cl1.add(new Command(CommandName.JMP, -(cl1Size + cl2Size + 2)));
 
         return cl1;
     }

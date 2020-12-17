@@ -36,12 +36,14 @@ public class IfParseTree
     public List<Command> compile() {
         List<Command> cl1 = ept.compile();
         List<Command> cl2 = stm1.compile();
+        int cl2Size = cl2.size();
         List<Command> cl3 = stm2.compile();
+        int cl3Size = cl3.size();
 
         cl1.add(new Command(CommandName.CJMP, 2));
-        cl1.add(new Command(CommandName.JMP, cl2.size() + 2));
+        cl1.add(new Command(CommandName.JMP, cl2Size + 2));
         cl1.addAll(cl2);
-        cl1.add(new Command(CommandName.JMP, cl3.size() + 1));
+        cl1.add(new Command(CommandName.JMP, cl3Size + 1));
         cl1.addAll(cl3);
 
         return cl1;
